@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Jessie Math - 運算探險家</title>
+
+    <!-- ✅ 快取連結預覽（請放在 <head> 裡） -->
+    <!-- 控制預覽卡片那行文字（很多平台會抓這個） -->
+    <meta name="description" content="© 2025–2026 Jessie Math 捷析老師. All rights reserved.">
+    <!-- LINE / FB 常抓這個（預覽卡片的描述文字） -->
+    <meta property="og:description" content="© 2025–2026 Jessie Math 捷析老師. All rights reserved.">
+
+    <!-- ✅ LINE / FB 預覽用 -->
+    <meta property="og:title" content="Jessie Math - 運算探險家">
+    <meta property="og:description" content="© 2025–2026 Jessie Math 捷析老師. All rights reserved.">
+    <meta property="og:type" content="website">
+
+    <!-- ✅ 預覽圖片（把檔名換成你的主題圖，例如 g5-u6-1.png） -->
+    <meta property="og:image" content="g5-u6-1.png">
+    <meta property="og:image:width" content="1024">
+    <meta property="og:image:height" content="1536">
+    <meta property="og:image:alt" content="Jessie Math 遊戲封面">
+
+    <!-- ✅ 有些平台會參考 -->
+    <link rel="image_src" href="g5-u6-1.png">
+
+    <!-- ✅ Twitter / X（可用同一張圖） -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Jessie Math - 運算探險家 ">
+    <meta name="twitter:description" content="© 2025–2026 Jessie Math 捷析老師. All rights reserved.">
+    <meta name="twitter:image" content="g5-u6-1.png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&family=Nunito:wght=800&display=swap" rel="stylesheet">
+
+    <style>
+        /* 您的自定義 CSS 和動畫 (保持不變) */
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #f0f9ff;
+            background-image: radial-gradient(#bae6fd 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        .brand-font { font-family: 'Nunito', sans-serif; }
+        .hidden-section { display: none !important; }
+        .game-card {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95);
+        }
+        .btn-bounce:active { transform: scale(0.95); }
+
+        /* 動畫特效 */
+        @keyframes popIn {
+            0% { transform: scale(0); opacity: 0; }
+            80% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .star-pop { animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0); opacity: 1; }
+            100% { transform: translateY(-30px); opacity: 0; }
+        }
+        .combo-text {
+            position: absolute;
+            font-weight: 900;
+            color: #fbbf24;
+            text-shadow: 2px 2px 0px #b45309;
+            animation: floatUp 1s ease-out forwards;
+            pointer-events: none;
+            z-index: 50;
+        }
+
+        /* 答錯時的震動 */
+        .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+
+        /* ✅ 第二：答對/答錯回饋 Toast（新增，輕量不動主版型） */
+        .toast {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 92px;
+            z-index: 60;
+            width: min(92%, 520px);
+            border-radius: 16px;
+            padding: 12px 14px;
+            box-shadow: 0 18px 50px rgba(0,0,0,.18);
+            display: none;
+        }
+        .toast.show { display: block; animation: popIn .35s cubic-bezier(0.175, 0.885, 0.32, 1.275) both; }
+        .toast.good { background: rgba(34,197,94,.95); color: #fff; }
+        .toast.bad  { background: rgba(239,68,68,.95); color: #fff; }
+
+        /* ✅ 題目提示區（新增，不改原結構：放在題目下方） */
+        .hint-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            line-height: 1;
+            background: rgba(59,130,246,.08);
+            border: 1px solid rgba(59,130,246,.18);
+            color: #1e40af;
+            max-width: 100%;
+        }
+        .hint-chip i { opacity: .8; }
+
+        /* ✅ 第五：RWD 補強（不改整體，只修小螢幕擠壓/高度） */
+        @media (max-width: 640px){
+            body{ padding-top: 92px !important; }
+            nav{ height: 76px !important; }
+            .game-card{ height: calc(100vh - 108px) !important; min-height: 540px !important; }
+            .nav-text{ display:none; }
+        }
+        @media (min-width: 641px) and (max-width: 1024px){
+            .game-card{ height: calc(100vh - 124px) !important; min-height: 620px !important; }
+        }
+
+        /* ✅ 第三：Footer 樣式（新增） */
+        footer{
+            width: 100%;
+            max-width: 1120px;
+            margin: 14px auto 8px;
+            padding: 0 16px 10px;
+        }
+        .footer-pill{
+            display:flex;
+            gap:12px;
+            align-items:center;
+            justify-content:space-between;
+            padding: 12px 14px;
+            border-radius: 999px;
+            background: rgba(255,255,255,.72);
+            border: 1px solid rgba(148,163,184,.45);
+            box-shadow: 0 12px 30px rgba(2, 6, 23, .08);
+            backdrop-filter: blur(10px);
+        }
+        .footer-left, .footer-right{ display:flex; align-items:center; gap:10px; min-width:0; }
+        .footer-dot{
+            width: 10px; height: 10px; border-radius: 999px;
+            background: #fbbf24;
+            box-shadow: 0 0 0 4px rgba(251,191,36,.18);
+            flex-shrink:0;
+        }
+        .footer-copy{
+            font-size: 12px;
+            color:#334155;
+            white-space:nowrap;
+            overflow:hidden;
+            text-overflow:ellipsis;
+            max-width: 56vw;
+        }
+        .footer-icon{
+            width: 30px; height: 30px;
+            border-radius: 999px;
+            display:flex; align-items:center; justify-content:center;
+            background: rgba(99,102,241,.12);
+            color:#4f46e5;
+            flex-shrink:0;
+        }
+        .footer-tagline{
+            font-size: 12px;
+            color:#475569;
+            white-space:nowrap;
+            overflow:hidden;
+            text-overflow:ellipsis;
+            max-width: 44vw;
+        }
+        @media (max-width: 640px){
+            .footer-pill{ border-radius: 22px; flex-direction:column; align-items:flex-start; }
+            .footer-copy, .footer-tagline{ max-width: 100%; white-space:normal; }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center pt-24 pb-4 px-4">
+
+    <nav class="fixed top-0 left-0 w-full bg-white shadow-sm z-50 py-2 px-4 md:px-8 flex justify-between items-center h-20 transition-all">
+        <div class="flex items-center gap-3">
+            <div class="relative w-12 h-12 rounded-full border-[3px] border-orange-400 p-0.5 bg-white flex-shrink-0 overflow-hidden">
+                <img src="JESSIEMATH-Q.png" onerror="this.src='https://ui-avatars.com/api/?name=JM&background=random'" alt="Jessie Logo" class="w-full h-full object-cover rounded-full">
+            </div>
+            <span class="brand-font text-2xl md:text-3xl font-extrabold text-[#1e293b] tracking-tight">
+                Jessie Math
+            </span>
+        </div>
+
+        <div class="flex items-center gap-2 md:gap-3">
+            <a href="https://jessiemath0703-chu.github.io/website2/" class="flex items-center gap-2 px-4 md:px-5 py-2.5 rounded-xl border border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition text-sm font-bold no-underline">
+                <i class="fas fa-home text-gray-500"></i>
+                <span class="nav-text">首頁</span>
+            </a>
+
+            <a href="https://jessiemath0703-chu.github.io/Game-Lobby/" class="flex items-center gap-2 px-4 md:px-5 py-2.5 rounded-xl border border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition text-sm font-bold no-underline">
+                <i class="fas fa-desktop text-gray-500"></i>
+                <span class="nav-text">遊戲大廳</span>
+            </a>
+
+            <a href="https://jessiemath0703-chu.github.io/Game-Lobby/#g5-u6" class="flex items-center gap-2 px-4 md:px-5 py-2.5 rounded-xl bg-indigo-50 text-indigo-700 hover:bg-indigo-100 transition text-sm font-bold no-underline border border-indigo-200">
+                <i class="fas fa-chevron-left"></i>
+                <span class="nav-text">五年級四則運算</span>
+            </a>
+        </div>
+    </nav>
+
+    <div class="game-card w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden border-4 border-white relative flex flex-col" style="height: calc(100vh - 120px); min-height: 600px;">
+
+        <div id="start-screen" class="flex-1 flex flex-col items-center justify-center p-6 space-y-4">
+            <div class="text-center">
+                <h1 class="text-3xl font-bold text-blue-800 tracking-wider mb-1">運算探險家</h1>
+                <div class="h-1 w-20 bg-orange-400 mx-auto rounded-full"></div>
+                <p class="text-sm text-gray-500 mt-2">主題六：五年級四則運算</p>
+            </div>
+            <div class="bg-blue-50 w-full rounded-2xl p-4 border-2 border-blue-100 shadow-sm">
+                <h3 class="text-center font-bold text-blue-800 mb-3 border-b border-blue-200 pb-2">
+                    <i class="fas fa-scroll mr-1"></i> 冒險規則
+                </h3>
+                <div class="space-y-3 text-sm md:text-base text-gray-700">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full bg-blue-200 flex items-center justify-center text-blue-700 flex-shrink-0 font-bold">
+                            <i class="fas fa-calculator"></i>
+                        </div>
+                        <div>
+                            <span class="font-bold text-blue-700">遊戲內容</span>
+                            <p class="text-xs text-gray-500">挑戰併式、分配律、連除與生活應用題。</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full bg-green-200 flex items-center justify-center text-green-700 flex-shrink-0 font-bold">
+                            <i class="fas fa-stopwatch"></i>
+                        </div>
+                        <div>
+                            <span class="font-bold text-green-700">限時挑戰</span>
+                            <p class="text-xs text-gray-500">每局 <span class="font-bold text-red-500">60秒</span>，答對獎勵 <span class="font-bold text-green-600">+5秒</span>，答錯 <span class="font-bold text-red-600">-5秒</span>。</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full bg-yellow-100 flex items-center justify-center text-yellow-600 flex-shrink-0 font-bold">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        <div>
+                            <span class="font-bold text-yellow-600">連擊計分</span>
+                            <p class="text-xs text-gray-500">連續答對啟動 <span class="font-bold text-orange-500">Combo</span>，分數會加倍！</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="w-full space-y-3 pt-2">
+                <input type="text" id="player-name" placeholder="請輸入你的名字"
+                    class="w-full px-6 py-3 rounded-xl border-2 border-blue-200 text-center text-lg focus:border-blue-500 focus:outline-none transition bg-white/50">
+                <button onclick="goToMenu()"
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl shadow-lg transform transition btn-bounce text-xl flex items-center justify-center gap-2">
+                    開始探險 <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <div id="instruction-modal" class="hidden absolute inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm flex flex-col overflow-hidden animate-fade-in-up">
+                <div class="bg-blue-600 p-4 text-white text-center font-bold text-xl relative">
+                    <i class="fas fa-info-circle mr-2"></i> 詳細說明
+                    <button onclick="hideInstructions()" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-blue-200 hover:text-white">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="p-6 space-y-4 text-gray-700 text-sm md:text-base overflow-y-auto max-h-[60vh]">
+                    <p>這是五年級四則運算的專屬挑戰：</p>
+                    <ul class="list-disc pl-5 space-y-2">
+                        <li>**計分規則**：基礎分 100 分，連擊 (Combo) 越多，獎勵分數越高！</li>
+                        <li>**時間懲罰**：答錯將倒扣 5 秒，請務必謹慎計算。</li>
+                        <li>**目標**：挑戰三星 (★★★) 評級，登上排行榜！</li>
+                        <li>**難度差異**：困難模式下，數字將更大，計算量更高。</li>
+                    </ul>
+                </div>
+                <div class="p-4 border-t border-gray-100">
+                    <button onclick="hideInstructions()" class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl">了解！</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="menu-screen" class="hidden-section flex-1 flex flex-col p-6 h-full">
+            <header class="flex justify-between items-center mb-4 flex-shrink-0">
+                <div>
+                    <p class="text-gray-500 text-xs">你好，運算探險家</p>
+                    <h2 id="display-name" class="text-xl font-bold text-blue-800 truncate max-w-[150px]">玩家</h2>
+                </div>
+                <button onclick="showInstructions()" class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-bold shadow-sm hover:bg-yellow-200 transition">
+                    <i class="fas fa-info-circle mr-1"></i> 規則
+                </button>
+            </header>
+
+            <div class="flex justify-center space-x-2 mb-6 flex-shrink-0">
+                <button id="btn-normal" onclick="setDifficulty('normal')" class="flex-1 py-2 text-sm rounded-lg font-bold border-2 transition bg-green-50 text-green-700 border-green-400">普通</button>
+                <button id="btn-hard" onclick="setDifficulty('hard')" class="flex-1 py-2 text-sm rounded-lg font-bold border-2 transition text-gray-400 border-gray-200">困難 (分數x1.5)</button>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 mb-6 flex-shrink-0">
+                <button onclick="startGame(1)" class="p-3 bg-white border-2 border-blue-50 rounded-xl hover:border-blue-400 hover:shadow-md transition text-left group relative overflow-hidden">
+                    <div class="absolute -right-2 -bottom-2 text-6xl opacity-5">🔢</div>
+                    <div class="text-2xl mb-1 group-hover:scale-110 transition inline-block">📝</div>
+                    <div class="font-bold text-gray-700 text-sm">步驟迷宮</div>
+                    <div class="text-[10px] text-gray-400">6-1 三步驟的併式</div>
+                </button>
+                <button onclick="startGame(2)" class="p-3 bg-white border-2 border-blue-50 rounded-xl hover:border-blue-400 hover:shadow-md transition text-left group relative overflow-hidden">
+                    <div class="absolute -right-2 -bottom-2 text-6xl opacity-5">🎁</div>
+                    <div class="text-2xl mb-1 group-hover:scale-110 transition inline-block">🔗</div>
+                    <div class="font-bold text-gray-700 text-sm">分配律工廠</div>
+                    <div class="text-[10px] text-gray-400">6-2 分配律應用</div>
+                </button>
+                <button onclick="startGame(3)" class="p-3 bg-white border-2 border-blue-50 rounded-xl hover:border-blue-400 hover:shadow-md transition text-left group relative overflow-hidden">
+                    <div class="absolute -right-2 -bottom-2 text-6xl opacity-5">➗</div>
+                    <div class="text-2xl mb-1 group-hover:scale-110 transition inline-block">⚔️</div>
+                    <div class="font-bold text-gray-700 text-sm">連除挑戰</div>
+                    <div class="text-[10px] text-gray-400">6-3 連除的計算</div>
+                </button>
+                <button onclick="startGame(4)" class="p-3 bg-white border-2 border-blue-50 rounded-xl hover:border-blue-400 hover:shadow-md transition text-left group relative overflow-hidden">
+                    <div class="absolute -right-2 -bottom-2 text-6xl opacity-5">💰</div>
+                    <div class="text-2xl mb-1 group-hover:scale-110 transition inline-block">📊</div>
+                    <div class="font-bold text-gray-700 text-sm">平均分配</div>
+                    <div class="text-[10px] text-gray-400">6-3 平均應用題</div>
+                </button>
+                <button onclick="startGame(5)" class="p-3 bg-gradient-to-br from-purple-500 to-indigo-600 text-white rounded-xl shadow-lg hover:shadow-xl transition text-left relative overflow-hidden col-span-2">
+                    <div class="absolute top-0 right-0 p-2 opacity-20 text-4xl"><i class="fas fa-shopping-bag"></i></div>
+                    <div class="text-2xl mb-1">🛒</div>
+                    <div class="font-bold text-sm">生活應用家</div>
+                    <div class="text-[10px] text-purple-200">6-4 日常問題與百分比</div>
+                </button>
+            </div>
+
+            <div class="bg-white rounded-xl p-3 border border-gray-100 flex-1 overflow-y-auto min-h-0">
+                <h3 class="text-xs font-bold text-gray-400 uppercase mb-2 sticky top-0 bg-white pb-1">冒險者排行</h3>
+                <ul id="leaderboard-list" class="space-y-2 text-xs text-gray-600">
+                    <li class="text-center text-gray-400 py-4">暫無紀錄</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="game-screen" class="hidden-section flex-1 flex flex-col relative h-full">
+            <div class="bg-blue-600 p-3 text-white flex justify-between items-center shadow-md z-10 flex-shrink-0">
+                <div class="flex items-center space-x-3">
+                    <button onclick="pauseGame()" class="hover:bg-blue-500 p-2 rounded-lg transition"><i class="fas fa-pause"></i></button>
+                    <div>
+                        <div class="text-[10px] text-blue-200" id="level-title">Level 1</div>
+                        <div class="font-bold text-lg leading-none"><i class="fas fa-star text-yellow-300 mr-1"></i> <span id="score-display">0</span></div>
+                    </div>
+                </div>
+                <div class="relative">
+                    <div class="text-2xl font-mono font-bold bg-blue-800 px-3 py-1 rounded-lg border border-blue-400 min-w-[3ch] text-center" id="timer-display">60</div>
+                </div>
+            </div>
+
+            <div class="flex-1 p-4 flex flex-col justify-center items-center bg-white overflow-hidden relative">
+                <div id="combo-container" class="absolute top-1/4 left-1/2 transform -translate-x-1/2 z-0"></div>
+
+                <div class="text-6xl mb-4 animate-bounce z-10" id="question-image">❓</div>
+                <h3 class="text-lg md:text-2xl font-bold text-center text-gray-800 leading-relaxed z-10 max-w-md" id="question-text">
+                    題目載入中...
+                </h3>
+
+                <!-- ✅ 題目參考提示（新增） -->
+                <div class="mt-3 z-10 w-full flex justify-center">
+                    <div id="hint-chip" class="hint-chip hidden">
+                        <i class="fas fa-lightbulb"></i>
+                        <span id="hint-text">參考提示</span>
+                    </div>
+                </div>
+
+                <!-- ✅ 正確答案提示（答錯顯示） -->
+                <div id="correct-reveal" class="mt-3 z-10 hidden px-4 py-2 rounded-xl border border-red-200 bg-red-50 text-red-700 text-sm font-bold">
+                    正確答案：<span id="correct-reveal-text"></span>
+                </div>
+            </div>
+
+            <div class="p-3 bg-gray-50 rounded-t-3xl border-t border-gray-200 flex-shrink-0 z-20">
+                <div id="options-grid" class="grid grid-cols-2 gap-2 md:gap-3">
+                </div>
+            </div>
+
+            <!-- ✅ 回饋 Toast（新增） -->
+            <div id="toast" class="toast">
+                <div class="flex items-start gap-3">
+                    <div class="text-xl leading-none mt-0.5" id="toast-emoji">✨</div>
+                    <div class="flex-1">
+                        <div class="font-black text-base" id="toast-title">回饋</div>
+                        <div class="text-sm opacity-95 mt-0.5" id="toast-msg">內容</div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="pause-modal" class="hidden absolute inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center">
+                <div class="bg-white p-6 rounded-2xl shadow-2xl w-3/4 max-w-sm text-center">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">遊戲暫停</h2>
+                    <div class="space-y-3">
+                        <button onclick="resumeGame()" class="w-full bg-green-500 hover:bg-green-600 text-white py-3 rounded-xl font-bold"><i class="fas fa-play mr-2"></i> 繼續</button>
+                        <button onclick="restartGame()" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-3 rounded-xl font-bold"><i class="fas fa-redo mr-2"></i> 重新開始</button>
+                        <button onclick="backToMenu(true)" class="w-full bg-gray-200 hover:bg-gray-300 text-gray-600 py-3 rounded-xl font-bold"><i class="fas fa-home mr-2"></i> 回選單</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="result-screen" class="hidden-section flex-1 flex flex-col items-center justify-center p-8 text-center bg-gradient-to-b from-blue-50 to-white">
+            <div id="stars-container" class="flex justify-center gap-2 mb-4 h-16">
+            </div>
+
+            <h2 class="text-3xl font-bold text-gray-800 mb-2">探險結束！</h2>
+            <p class="text-gray-500 mb-6">玩家：<span id="result-name" class="font-bold text-blue-600"></span></p>
+
+            <div class="bg-white p-6 rounded-2xl shadow-xl border-2 border-blue-100 w-full mb-6 relative overflow-hidden">
+                <div class="absolute -right-4 -top-4 text-gray-50 opacity-20 text-9xl rotate-12"><i class="fas fa-crown"></i></div>
+                <p class="text-sm text-gray-400 uppercase tracking-wide">最終得分</p>
+                <p class="text-5xl font-black text-blue-600 mt-2" id="final-score">0</p>
+            </div>
+
+            <div class="flex gap-3 w-full">
+                <button onclick="backToMenu(false)" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-600 font-bold py-3 rounded-xl transition">
+                    回大廳
+                </button>
+                <button onclick="restartGame()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl shadow-lg btn-bounce transition">
+                    再玩一次
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ✅ 第三：Footer（新增） -->
+    <footer>
+        <div class="footer-pill">
+            <div class="footer-left">
+                <div class="footer-dot" aria-hidden="true"></div>
+                <div class="footer-copy">© 2025–2026 Jessie Math 捷析老師. All rights reserved.</div>
+            </div>
+            <div class="footer-right">
+                <div class="footer-icon" aria-hidden="true"><i class="fas fa-compass"></i></div>
+                <div class="footer-tagline">數學不迷路，Jessie 帶你走向理解。</div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // --- 遊戲狀態管理 ---
+        let gameState = {
+            playerName: '',
+            difficulty: 'normal',
+            currentLevel: 1,
+            score: 0,
+            timeLeft: 60,
+            isPlaying: false,
+            isPaused: false,
+            timerInterval: null,
+            combo: 0
+        };
+
+        let leaderboard = JSON.parse(localStorage.getItem('jessieMathLeaderboard')) || [];
+
+        // ✅ 當前題目資料（新增：用來顯示參考與正確答案）
+        let currentQ = null;
+
+        // --- 畫面切換邏輯 ---
+        const screens = {
+            start: document.getElementById('start-screen'),
+            menu: document.getElementById('menu-screen'),
+            game: document.getElementById('game-screen'),
+            result: document.getElementById('result-screen')
+        };
+
+        function showScreen(screenName) {
+            Object.values(screens).forEach(el => el.classList.add('hidden-section'));
+            screens[screenName].classList.remove('hidden-section');
+            if(screenName === 'menu') renderLeaderboard();
+        }
+
+        // --- 遊戲流程控制 ---
+        function goToMenu() {
+            const nameInput = document.getElementById('player-name').value.trim();
+            if (!nameInput) {
+                alert("請輸入名字才能開始探險喔！");
+                return;
+            }
+            gameState.playerName = nameInput;
+            document.getElementById('display-name').textContent = gameState.playerName;
+            showScreen('menu');
+        }
+
+        function setDifficulty(diff) {
+            gameState.difficulty = diff;
+            const btnNormal = document.getElementById('btn-normal');
+            const btnHard = document.getElementById('btn-hard');
+
+            if (diff === 'normal') {
+                btnNormal.className = "flex-1 py-2 text-sm rounded-lg font-bold border-2 transition bg-green-50 text-green-700 border-green-400";
+                btnHard.className = "flex-1 py-2 text-sm rounded-lg font-bold border-2 transition text-gray-400 border-gray-200";
+            } else {
+                btnNormal.className = "flex-1 py-2 text-sm rounded-lg font-bold border-2 transition text-gray-400 border-gray-200";
+                btnHard.className = "flex-1 py-2 text-sm rounded-lg font-bold border-2 transition bg-red-50 text-red-700 border-red-400";
+            }
+        }
+
+        function startGame(level) {
+            gameState.currentLevel = level;
+            gameState.score = 0;
+            gameState.timeLeft = 60;
+            gameState.isPlaying = true;
+            gameState.isPaused = false;
+            gameState.combo = 0;
+
+            const titles = ["步驟迷宮 (併式)", "分配律工廠", "連除挑戰", "平均分配", "生活應用家"];
+            document.getElementById('level-title').textContent = titles[level - 1] || "綜合挑戰";
+
+            updateUI();
+            showScreen('game');
+            nextQuestion();
+
+            if(gameState.timerInterval) clearInterval(gameState.timerInterval);
+            gameState.timerInterval = setInterval(gameLoop, 1000);
+        }
+
+        function gameLoop() {
+            if(!gameState.isPaused) {
+                gameState.timeLeft--;
+                if (gameState.timeLeft < 0) gameState.timeLeft = 0;
+                updateUI();
+                if(gameState.timeLeft <= 0) endGame();
+            }
+        }
+
+        function pauseGame() {
+            gameState.isPaused = true;
+            document.getElementById('pause-modal').classList.remove('hidden');
+        }
+
+        function resumeGame() {
+            gameState.isPaused = false;
+            document.getElementById('pause-modal').classList.add('hidden');
+        }
+
+        function restartGame() {
+            document.getElementById('pause-modal').classList.add('hidden');
+            startGame(gameState.currentLevel);
+        }
+
+        function backToMenu(skipSave) {
+            clearInterval(gameState.timerInterval);
+            document.getElementById('pause-modal').classList.add('hidden');
+            showScreen('menu');
+        }
+
+        function endGame() {
+            clearInterval(gameState.timerInterval);
+            gameState.isPlaying = false;
+
+            let stars = 1;
+            if (gameState.score >= 1200) stars = 3;
+            else if (gameState.score >= 600) stars = 2;
+
+            document.getElementById('result-name').textContent = gameState.playerName;
+            document.getElementById('final-score').textContent = gameState.score;
+
+            const starsContainer = document.getElementById('stars-container');
+            starsContainer.innerHTML = '';
+            for(let i=0; i<3; i++) {
+                const star = document.createElement('div');
+                star.className = `text-4xl ${i < stars ? 'text-yellow-400' : 'text-gray-300'} fas fa-star transform scale-0`;
+                if(i < stars) star.style.animation = `popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards ${i * 0.2}s`;
+                else star.style.transform = 'scale(1)';
+                starsContainer.appendChild(star);
+            }
+
+            saveScore();
+            showScreen('result');
+        }
+
+        // --- 小工具 ---
+        function randInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+        function shuffle(array) { return array.sort(() => Math.random() - 0.5); }
+        function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
+
+        // ✅ Toast（新增）
+        let toastTimer = null;
+        function showToast(type, title, msg){
+            const toast = document.getElementById('toast');
+            const emoji = document.getElementById('toast-emoji');
+            const t = document.getElementById('toast-title');
+            const m = document.getElementById('toast-msg');
+
+            toast.className = "toast " + (type === 'good' ? "good" : "bad") + " show";
+            emoji.textContent = (type === 'good') ? "✨" : "🧯";
+            t.textContent = title;
+            m.textContent = msg;
+
+            if(toastTimer) clearTimeout(toastTimer);
+            toastTimer = setTimeout(()=> toast.classList.remove('show'), 950);
+        }
+
+        // --- 題目生成（第一：更豐富＋每題參考提示） ---
+        function nextQuestion() {
+            const level = gameState.currentLevel;
+            let qData = {};
+            if (level === 5) qData = generateLevel5();
+            else if (level === 4) qData = generateLevel4();
+            else if (level === 3) qData = generateLevel3();
+            else if (level === 2) qData = generateLevel2();
+            else qData = generateLevel1();
+
+            currentQ = qData;
+            renderQuestion(qData);
+        }
+
+        // 生成亂數答案，確保不重複（維持原本）
+        function generateOptions(correctAnswer, unit) {
+            let options = new Set();
+            options.add(correctAnswer);
+
+            let offsetBase = Math.max(1, Math.floor(Math.abs(correctAnswer) / 10));
+
+            while(options.size < 4) {
+                let factor = shuffle([-3, -2, -1, 1, 2, 3])[0];
+                let wrongAnswer = Math.round((correctAnswer + factor * offsetBase) * 100) / 100;
+                if (wrongAnswer <= 0) continue;
+                options.add(wrongAnswer);
+            }
+
+            return shuffle(Array.from(options).map(ans => `${ans}${unit}`));
+        }
+
+        // Level 1: 三步驟的併式（加多種變化：括號/連除/先乘除後加減）
+        function generateLevel1() {
+            const variant = randInt(1, 4);
+            let ans, question, hint;
+
+            if (variant === 1) {
+                // 併式：a ± (b × c)
+                let a = randInt(120, 600);
+                let b = randInt(6, 18);
+                let c = randInt(2, 9);
+                let op = shuffle(['+', '-'])[0];
+                if (op === '-' && a < b*c) a = randInt(b*c + 50, b*c + 400);
+
+                question = `計算：${a} ${op} (${b} × ${c}) = ?`;
+                ans = (op === '+') ? (a + b*c) : (a - b*c);
+                hint = "參考：先算括號內，再做加減。";
+            } else if (variant === 2) {
+                // 併式：(a ± b) ÷ c，確保整除
+                let a = randInt(200, 900);
+                let b = randInt(10, 80);
+                let c = randInt(2, 9);
+                let op = shuffle(['+', '-'])[0];
+                if (op === '-' && a < b) a = randInt(b + 120, b + 700);
+
+                let val = (op === '+') ? (a + b) : (a - b);
+                while (val % c !== 0){
+                    c = randInt(2, 9);
+                }
+                question = `計算：(${a} ${op} ${b}) ÷ ${c} = ?`;
+                ans = val / c;
+                hint = "參考：先算括號，再做除法。";
+            } else if (variant === 3) {
+                // 連除：a ÷ b ÷ c（同除以 b×c）
+                let b = randInt(2, 9);
+                let c = randInt(2, 9);
+                let a = randInt(200, 1200);
+                while (a % (b*c) !== 0) a = randInt(200, 1200);
+                question = `計算：${a} ÷ ${b} ÷ ${c} = ?`;
+                ans = a / (b*c);
+                hint = "參考：連除 = 除以（兩個除數的積）。";
+            } else {
+                // 括號： (a × b) ± (c × d)
+                let a = randInt(6, 18), b = randInt(4, 15);
+                let c = randInt(6, 18), d = randInt(4, 15);
+                let op = shuffle(['+', '-'])[0];
+                let left = a*b, right = c*d;
+                if (op === '-' && left < right) { [left, right] = [right, left]; [a,c]=[c,a]; [b,d]=[d,b]; }
+                question = `計算：(${a} × ${b}) ${op} (${c} × ${d}) = ?`;
+                ans = (op === '+') ? (left + right) : (left - right);
+                hint = "參考：先算兩邊乘法，再做加減。";
+            }
+
+            const unit = '';
+            return {
+                text: `<span class="text-2xl font-mono">${question}</span>`,
+                icon: '🔢',
+                correct: `${ans}${unit}`,
+                options: generateOptions(ans, unit),
+                hint
+            };
+        }
+
+        // Level 2: 分配律（加：乘法分配/除法分配/提公因數算值）
+        function generateLevel2() {
+            const variant = randInt(1, 4);
+            let ans, question, hint;
+
+            if (variant === 1) {
+                // 乘法分配：k × (a ± b)
+                let k = randInt(12, 40);
+                let a = randInt(10, 60);
+                let b = randInt(5, 40);
+                let op = shuffle(['+', '-'])[0];
+                if (op === '-' && a < b) [a,b] = [b,a];
+
+                question = `利用分配律計算：${k} × (${a} ${op} ${b}) = ?`;
+                ans = k * (op === '+' ? (a + b) : (a - b));
+                hint = "參考：k×(a±b) = k×a ± k×b。";
+            } else if (variant === 2) {
+                // 除法分配：(x ± y) ÷ d，x、y 都是 d 的倍數
+                let d = randInt(2, 6);
+                let x = randInt(20, 80) * d;
+                let y = randInt(10, 60) * d;
+                let op = shuffle(['+', '-'])[0];
+                if (op === '-' && x < y) [x,y] = [y,x];
+
+                question = `利用分配律計算：(${x} ${op} ${y}) ÷ ${d} = ?`;
+                ans = (x / d) + (op === '+' ? (y / d) : -(y / d));
+                hint = "參考：(x±y)÷d = x÷d ± y÷d（先拆再算）。";
+            } else if (variant === 3) {
+                // 提公因數：a×k + b×k
+                let k = randInt(10, 60);
+                let a = randInt(12, 60);
+                let b = randInt(12, 60);
+                question = `利用分配律計算：${a}×${k} + ${b}×${k} = ?`;
+                ans = (a + b) * k;
+                hint = "參考：同因數先合併：(a+b)×k。";
+            } else {
+                // 經典：A×(10±1) 型
+                let A = randInt(120, 700);
+                let op = shuffle(['+', '-'])[0];
+                question = `利用分配律快速算：${A} × (10 ${op} 1) = ?`;
+                ans = (op === '+') ? A*11 : A*9;
+                hint = "參考：A×(10±1)=A×10±A。";
+            }
+
+            const unit = '';
+            return {
+                text: `<span class="text-xl font-bold">${question}</span>`,
+                icon: '🎁',
+                correct: `${ans}${unit}`,
+                options: generateOptions(ans, unit),
+                hint
+            };
+        }
+
+        // Level 3: 連除（加：連除/除以積/先拆後除）
+        function generateLevel3() {
+            const variant = randInt(1, 4);
+            let ans, question, hint;
+
+            if (variant === 1) {
+                let num1 = randInt(200, 1200);
+                let num2 = randInt(2, 10);
+                let num3 = randInt(2, 10);
+                while (num1 % (num2 * num3) !== 0) num1 = randInt(200, 1200);
+                question = `計算：${num1} ÷ ${num2} ÷ ${num3} = ?`;
+                ans = num1 / (num2 * num3);
+                hint = "參考：連除 = 除以（num2×num3）。";
+            } else if (variant === 2) {
+                let num1 = randInt(200, 1200);
+                let num2 = randInt(2, 10);
+                let num3 = randInt(2, 10);
+                while (num1 % (num2 * num3) !== 0) num1 = randInt(200, 1200);
+                question = `計算：${num1} ÷ (${num2} × ${num3}) = ?`;
+                ans = num1 / (num2 * num3);
+                hint = "參考：先算括號內的積，再做除法。";
+            } else if (variant === 3) {
+                // 560÷7÷8 類型
+                let a = randInt(300, 1200);
+                let b = randInt(2, 9);
+                let c = randInt(2, 9);
+                while (a % (b*c) !== 0) a = randInt(300, 1200);
+                question = `計算：${a} ÷ ${b} ÷ ${c}（可視為 ${a} ÷ (${b}×${c})） = ?`;
+                ans = a / (b*c);
+                hint = "參考：把兩個除數先乘起來，會更快。";
+            } else {
+                // (a ÷ b) ÷ c 形式
+                let b = randInt(2, 9), c = randInt(2, 9);
+                let a = randInt(300, 1500);
+                while (a % (b*c) !== 0) a = randInt(300, 1500);
+                question = `計算：(${a} ÷ ${b}) ÷ ${c} = ?`;
+                ans = a / (b*c);
+                hint = "參考：(a÷b)÷c = a÷(b×c)。";
+            }
+
+            const unit = '';
+            return {
+                text: `<span class="text-2xl font-mono">${question}</span>`,
+                icon: '➗',
+                correct: `${ans}${unit}`,
+                options: generateOptions(ans, unit),
+                hint
+            };
+        }
+
+        // Level 4: 平均分配應用（加：兩層平均/三層平均/總數可拆）
+        function generateLevel4() {
+            const variant = randInt(1, 3);
+            let ans, question, hint;
+
+            if (variant === 1) {
+                let total = randInt(500, 1200);
+                let groups = randInt(4, 10);
+                let members = randInt(2, 6);
+                while (total % (groups * members) !== 0) total = randInt(500, 1200);
+
+                question = `小明有 <span class="text-red-500 font-bold">${total}</span> 顆糖果，先平均分給 <span class="text-blue-600 font-bold">${groups}</span> 個班級，每個班級再平均分給 <span class="text-green-600 font-bold">${members}</span> 組。請問每組可以分到幾顆糖果？`;
+                ans = total / groups / members;
+                hint = "參考：先除班級，再除組數（連除）。";
+            } else if (variant === 2) {
+                let total = randInt(600, 1800);
+                let a = randInt(3, 8);
+                let b = randInt(2, 6);
+                let c = randInt(2, 5);
+                while (total % (a*b*c) !== 0) total = randInt(600, 1800);
+
+                question = `有 <span class="text-red-500 font-bold">${total}</span> 本書，先平均分給 <span class="text-blue-600 font-bold">${a}</span> 個櫃子，每個櫃子再平均分到 <span class="text-green-600 font-bold">${b}</span> 層，每層再分成 <span class="text-purple-600 font-bold">${c}</span> 疊。每疊有幾本？`;
+                ans = total / a / b / c;
+                hint = "參考：連除三次＝除以（a×b×c）。";
+            } else {
+                let total = randInt(800, 2000);
+                let spend = randInt(100, 600);
+                let people = randInt(3, 8);
+                while ((total - spend) <= 0 || (total - spend) % people !== 0) {
+                    spend = randInt(100, 600);
+                }
+
+                question = `小華有 <span class="text-red-500 font-bold">${total}</span> 元，他先花了 <span class="text-blue-600 font-bold">${spend}</span> 元，剩下的錢平均分給 <span class="text-green-600 font-bold">${people}</span> 個朋友，每人可分到多少元？`;
+                ans = (total - spend) / people;
+                hint = "參考：先做（總額－花費），再平均分。";
+            }
+
+            const unit = (variant === 1) ? '顆' : '本' ;
+            const finalUnit = (variant === 3) ? '元' : unit;
+
+            return {
+                text: question,
+                icon: '📊',
+                correct: `${ans}${finalUnit}`,
+                options: generateOptions(ans, finalUnit),
+                hint
+            };
+        }
+
+        // Level 5: 生活應用（加：折扣/平均/多筆加總後平均/找差額）
+        function generateLevel5() {
+            const variant = randInt(1, 4);
+            let ans, question, hint, unit;
+
+            if (variant === 1) {
+                let originalPrice = randInt(200, 1200);
+                let discountRate = randInt(6, 9) * 10; // 60-90 折
+                let discount = discountRate / 100;
+
+                question = `一件原價 <span class="text-red-500 font-bold">${originalPrice}</span> 元的商品，現在打 <span class="text-blue-600 font-bold">${discountRate}</span> 折。請問比原價便宜了多少元？`;
+                ans = originalPrice * (1 - discount);
+                unit = '元';
+                hint = "參考：便宜＝原價×(1－折扣)。";
+            } else if (variant === 2) {
+                let total = randInt(800, 3000);
+                let cost = randInt(100, 800);
+                let people = randInt(3, 7);
+                while ((total - cost) <= 0 || (total - cost) % people !== 0) cost = randInt(100, 800);
+
+                question = `小華有 <span class="text-red-500 font-bold">${total}</span> 元，他花了 <span class="text-blue-600 font-bold">${cost}</span> 元。剩下的錢要平均分給 <span class="text-green-600 font-bold">${people}</span> 個朋友，每人可分到多少元？`;
+                ans = (total - cost) / people;
+                unit = '元';
+                hint = "參考：先減再除，別被文字騙走。";
+            } else if (variant === 3) {
+                let d1 = randInt(70, 120);
+                let d2 = randInt(70, 120);
+                let d3 = randInt(70, 120);
+                let d4 = randInt(70, 120);
+                let d5 = randInt(70, 120);
+
+                question = `某店星期一到星期五的收入（萬元）分別是：<span class="font-bold text-blue-700">${d1}</span>、<span class="font-bold text-blue-700">${d2}</span>、<span class="font-bold text-blue-700">${d3}</span>、<span class="font-bold text-blue-700">${d4}</span>、<span class="font-bold text-blue-700">${d5}</span>。平均每天收入是多少（萬元）？`;
+                ans = (d1+d2+d3+d4+d5)/5;
+                unit = '萬元';
+                hint = "參考：平均＝總和÷天數。";
+            } else {
+                let money = randInt(3000, 8000);
+                let a = randInt(500, 3500);
+                let b = randInt(300, 2500);
+                while (money - a - b < 0){
+                    money = randInt(3000, 8000);
+                    a = randInt(500, 3500);
+                    b = randInt(300, 2500);
+                }
+                question = `小捷帶了 <span class="text-red-500 font-bold">${money}</span> 元，買了 <span class="text-blue-600 font-bold">${a}</span> 元的物品，又買了 <span class="text-green-600 font-bold">${b}</span> 元的物品。請問他還剩多少元？`;
+                ans = money - a - b;
+                unit = '元';
+                hint = "參考：剩下＝帶的－（第一樣＋第二樣）。";
+            }
+
+            return {
+                text: question,
+                icon: '🛒',
+                correct: `${ans}${unit}`,
+                options: generateOptions(ans, unit),
+                hint
+            };
+        }
+
+        // --- 核心互動邏輯 ---
+        function renderQuestion(qData) {
+            document.getElementById('question-text').innerHTML = qData.text;
+            document.getElementById('question-image').textContent = qData.icon;
+
+            const hintChip = document.getElementById('hint-chip');
+            const hintText = document.getElementById('hint-text');
+            if (qData.hint) {
+                hintText.textContent = qData.hint;
+                hintChip.classList.remove('hidden');
+            } else {
+                hintChip.classList.add('hidden');
+            }
+
+            document.getElementById('correct-reveal').classList.add('hidden');
+            document.getElementById('correct-reveal-text').textContent = "";
+
+            const grid = document.getElementById('options-grid');
+            grid.innerHTML = '';
+
+            qData.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = "bg-white hover:bg-blue-50 text-blue-800 font-bold py-3 px-2 md:py-4 md:px-2 rounded-xl border-b-4 border-blue-200 active:border-b-0 active:mt-1 transition-all text-base md:text-lg shadow-sm w-full h-full flex items-center justify-center leading-tight btn-bounce";
+                btn.innerHTML = opt;
+
+                btn.onclick = (e) => checkAnswer(opt, qData.correct, btn);
+                grid.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selected, correct, btnElement) {
+            const allBtns = document.getElementById('options-grid').children;
+            for(let btn of allBtns) btn.disabled = true;
+
+            if (selected === correct) {
+                btnElement.className = "bg-green-500 text-white font-bold py-3 px-2 md:py-4 md:px-2 rounded-xl border-b-4 border-green-700 shadow-lg w-full h-full flex items-center justify-center animate-pulse text-base md:text-lg";
+                btnElement.innerHTML += ' <i class="fas fa-check-circle ml-2"></i>';
+
+                gameState.combo++;
+                showComboEffect(gameState.combo);
+
+                let points = 100 + (gameState.combo > 1 ? (gameState.combo * 20) : 0);
+                if (gameState.difficulty === 'hard') points = Math.floor(points * 1.5);
+
+                gameState.score += points;
+                gameState.timeLeft += 5;
+
+                showToast('good', '答對啦！', `+${points} 分，時間 +5 秒（Combo x${gameState.combo}）`);
+            } else {
+                btnElement.className = "bg-red-500 text-white font-bold py-3 px-2 md:py-4 md:px-2 rounded-xl border-b-4 border-red-700 shadow-lg w-full h-full flex items-center justify-center shake text-base md:text-lg";
+
+                gameState.combo = 0;
+                gameState.timeLeft -= 5;
+                if (gameState.timeLeft < 0) gameState.timeLeft = 0;
+
+                document.getElementById('correct-reveal-text').textContent = correct;
+                document.getElementById('correct-reveal').classList.remove('hidden');
+
+                showToast('bad', '差一點點～', `正確答案：${correct}（時間 -5 秒）`);
+
+                const correctTextWithoutUnit = correct.replace(/<[^>]*>?/gm, '').replace(/[^\d\.]/g, '');
+                for(let btn of allBtns) {
+                    const btnDigits = btn.textContent.replace(/[^\d\.]/g, '');
+                    if(btnDigits === correctTextWithoutUnit) {
+                        btn.classList.add('bg-green-100', 'border-green-400', 'text-green-800');
+                        btn.classList.remove('bg-white', 'hover:bg-blue-50', 'text-blue-800');
+                    }
+                }
+            }
+
+            updateUI();
+
+            setTimeout(() => {
+                if(gameState.isPlaying && gameState.timeLeft > 0) nextQuestion();
+                else if (gameState.timeLeft <= 0) endGame();
+            }, 1050);
+        }
+
+        function showComboEffect(count) {
+            if(count < 2) return;
+            const container = document.getElementById('combo-container');
+            const el = document.createElement('div');
+            el.className = 'combo-text text-4xl md:text-6xl';
+            el.innerHTML = `Combo x${count}!`;
+            container.appendChild(el);
+            setTimeout(() => el.remove(), 1000);
+        }
+
+        function updateUI() {
+            document.getElementById('score-display').textContent = gameState.score;
+            const timerEl = document.getElementById('timer-display');
+            timerEl.textContent = gameState.timeLeft;
+
+            if(gameState.timeLeft < 10) {
+                timerEl.classList.add('bg-red-600', 'animate-pulse');
+                timerEl.classList.remove('bg-blue-800');
+            } else {
+                timerEl.classList.remove('bg-red-600', 'animate-pulse');
+                timerEl.classList.add('bg-blue-800');
+            }
+        }
+
+        // --- 排行榜 & 儲存 ---
+        function saveScore() {
+            if (gameState.score === 0) return;
+
+            leaderboard.push({
+                name: gameState.playerName,
+                score: gameState.score,
+                level: gameState.currentLevel,
+                date: new Date().toLocaleDateString()
+            });
+            leaderboard.sort((a, b) => b.score - a.score);
+            leaderboard = leaderboard.slice(0, 10);
+            localStorage.setItem('jessieMathLeaderboard', JSON.stringify(leaderboard));
+        }
+
+        function renderLeaderboard() {
+            const list = document.getElementById('leaderboard-list');
+            const levelNames = ["步驟迷宮", "分配律工廠", "連除挑戰", "平均分配", "生活應用家"];
+
+            const sortedBoard = leaderboard.slice().sort((a, b) => b.score - a.score);
+
+            if (sortedBoard.length === 0) {
+                list.innerHTML = '<li class="text-center text-gray-400 py-4">暫無紀錄，快來挑戰！</li>';
+                return;
+            }
+            list.innerHTML = sortedBoard.map((entry, index) => {
+                let medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `<span class="text-gray-400 w-6 text-center inline-block">${index+1}</span>`;
+                return `<li class="flex justify-between items-center border-b border-gray-100 py-2 last:border-0">
+                    <div class="flex items-center">
+                        <span class="mr-2 text-lg">${medal}</span>
+                        <span class="font-medium text-gray-700 truncate max-w-[100px]">${entry.name}</span>
+                        <span class="ml-2 text-[10px] text-gray-400 bg-gray-100 px-1 rounded">${levelNames[entry.level - 1] || 'L?'}</span>
+                    </div>
+                    <span class="font-bold text-blue-600 font-mono">${entry.score}</span>
+                </li>`;
+            }).join('');
+        }
+
+        // --- 初始化功能 ---
+        function showInstructions() { document.getElementById('instruction-modal').classList.remove('hidden'); }
+        function hideInstructions() { document.getElementById('instruction-modal').classList.add('hidden'); }
+
+        window.onload = function() {
+            setDifficulty('normal');
+            renderLeaderboard();
+        };
+    </script>
+</body>
+</html>
